@@ -3,6 +3,7 @@ import axios from '../../axios'
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ()=>{
     const {data} = await axios.get('/posts');
+    console.log('data',data)
     return data
 })
  
