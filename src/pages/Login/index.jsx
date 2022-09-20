@@ -28,8 +28,7 @@ export const Login = () => {
     const onSubmit = (values) => {
         dispatch(fetchAuth(values));
     };
-
-    console.log("isValid", isValid);
+ 
     return (
         <Paper classes={{ root: styles.root }}>
             <Typography classes={{ root: styles.title }} variant="h5">
