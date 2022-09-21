@@ -44,11 +44,7 @@ export const Home = () => {
                                     title={obj.title}
                                     imageUrl={obj.imageUrl}
                                     user={obj.user}
-<<<<<<< HEAD
-                                    createdAt={"12 июня 2022 г."}
-=======
                                     createdAt={obj.createdAt}
->>>>>>> 88d4a71 (added FullPost, TagsBlock, authSlice)
                                     viewsCount={obj.viewsCount}
                                     commentsCount={3}
                                     tags={obj.tags}
@@ -58,10 +54,7 @@ export const Home = () => {
                     )}
                 </Grid>
                 <Grid xs={4} item>
-                    <TagsBlock
-                        items={tags.items}
-                        isLoading={isTagsLoading}
-                    />
+                    <TagsBlock items={tags.items} isLoading={isTagsLoading} />
                     <CommentsBlock
                         items={[
                             {

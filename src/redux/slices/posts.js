@@ -1,14 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../axios";
 
-<<<<<<< HEAD
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ()=>{
-    const {data} = await axios.get('/posts');
-    console.log('data',data)
-    return data
-})
- 
-=======
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
     const { data } = await axios.get("/posts");
     return data;
@@ -26,7 +18,6 @@ export const fetchOnePost = createAsyncThunk(
         return data;
     }
 );
->>>>>>> 88d4a71 (added FullPost, TagsBlock, authSlice)
 
 const initialState = {
     posts: {
