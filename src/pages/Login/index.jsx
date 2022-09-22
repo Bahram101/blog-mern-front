@@ -11,6 +11,10 @@ import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
 import styles from "./Login.module.scss";
 
 export const Login = () => {
+    const isAuth = useSelector(selectIsAuth); 
+
+    const dispatch = useDispatch();
+
     const {
         register,
         handleSubmit,
@@ -24,11 +28,6 @@ export const Login = () => {
         mode: "onChange",
     });
 
-    const isAuth = useSelector(selectIsAuth);
-    // const isAuth = useSelector((state) => state.auth.data);
-
-    const dispatch = useDispatch();
-
     const onSubmit = (values) => {
         dispatch(fetchAuth(values));
     };
@@ -36,7 +35,7 @@ export const Login = () => {
     console.log("isAuth", isAuth);
 
     if (isAuth) {
-        // return <Navigate to="/" />;
+        return <Navigate to="/" />;
     }
 
     return (
@@ -49,7 +48,7 @@ export const Login = () => {
                     className={styles.field}
                     label="E-Mail"
                     error={errors.email?.message}
-                    helperText={errors.email?.message}
+                    helperText={Boolean(errors.email?.message)}
                     fullWidth
                     {...register("email", { required: "Заполните поле" })}
                 />

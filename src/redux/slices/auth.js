@@ -26,7 +26,7 @@ const authSlice = createSlice({
         },
         [fetchAuth.rejected]: (state) => {
             state.status = "error";
-            state.data = {};
+            state.data = null;
         },
     },
 });
