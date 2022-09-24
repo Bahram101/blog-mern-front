@@ -11,10 +11,8 @@ import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
 import styles from "./Login.module.scss";
 
 export const Login = () => {
-    const isAuth = useSelector(selectIsAuth); 
-
+    const isAuth = useSelector(selectIsAuth);   
     const dispatch = useDispatch();
-
     const {
         register,
         handleSubmit,
@@ -28,15 +26,23 @@ export const Login = () => {
         mode: "onChange",
     });
 
-    const onSubmit = (values) => {
-        dispatch(fetchAuth(values));
+    const onSubmit = async (values) => {
+        const data = await dispatch(fetchAuth(values));
+
+        if (!data.payload) {
+            return alert("Не удалось авторизоваться");
+        }
+        if ("token" in data.payload) {
+            window.localStorage.setItem("_token", data.payload.token);
+        }
     };
 
-    console.log("isAuth", isAuth);
 
     if (isAuth) {
         return <Navigate to="/" />;
     }
+
+
 
     return (
         <Paper classes={{ root: styles.root }}>
@@ -47,9 +53,9 @@ export const Login = () => {
                 <TextField
                     className={styles.field}
                     label="E-Mail"
+                    fullWidth
                     error={errors.email?.message}
                     helperText={Boolean(errors.email?.message)}
-                    fullWidth
                     {...register("email", { required: "Заполните поле" })}
                 />
                 <TextField

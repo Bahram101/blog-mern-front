@@ -1,11 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import clsx from "clsx";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Clear";
 import EditIcon from "@mui/icons-material/Edit";
 import EyeIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import CommentIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-
 import styles from "./Post.module.scss";
 import { UserInfo } from "../UserInfo";
 import { PostSkeleton } from "./Skeleton";
@@ -25,6 +25,7 @@ export const Post = ({
     isLoading,
     isEditable,
 }) => {
+
     if (isLoading) {
         return <PostSkeleton />;
     }
