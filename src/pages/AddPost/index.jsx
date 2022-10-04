@@ -1,5 +1,4 @@
 import React, { useRef, useState, useMemo, useCallback } from "react";
-import React from "react";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -10,16 +9,34 @@ import styles from "./AddPost.module.scss";
 import { Navigate } from "react-router-dom";
 import { selectIsAuth } from "../../redux/slices/auth";
 import { useSelector } from "react-redux";
+import axios from "../../axios";
 
 export const AddPost = () => {
     const isAuth = useSelector(selectIsAuth);
 
-    const imageUrl = "";
-    const [value, setValue] = React.useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [title, setTitle] = useState("");
+    const [tags, setTags] = useState("");
+    const [value, setValue] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+    const inputFileRef = useRef(null);
 
-    const handleChangeFile = () => {};
+    const handleChangeFile = async (e) => {
+        try {
+            const formData = new FormData();
+            const file = e.target.files[0];
+            formData.append("image", file);
+            const { data } = await axios.post("/upload", formData);
+            setImageUrl(data.url);
+        } catch (error) {
+            console.warn("errrr", error);
+            alert("Ошибка при загрузке файл!");
+        }
+    };
 
-    const onClickRemoveImage = () => {};
+    const onClickRemoveImage = () => {
+        setImageUrl('')
+    };
 
     const onChange = React.useCallback((value) => {
         setValue(value);
@@ -46,26 +63,38 @@ export const AddPost = () => {
 
     return (
         <Paper style={{ padding: 30 }}>
-            <Button variant="outlined" size="large">
+            <Button
+                variant="outlined"
+                onClick={() => inputFileRef.current.click()}
+                size="large"
+            >
                 Загрузить превью
             </Button>
-            <input type="file" onChange={handleChangeFile} hidden />
+            <input
+                type="file"
+                ref={inputFileRef}
+                onChange={handleChangeFile}
+                hidden
+            />
             {imageUrl && (
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={onClickRemoveImage}
-                >
-                    Удалить
-                </Button>
+                <>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={onClickRemoveImage}
+                    >
+                        Удалить
+                    </Button>
+                    <div>
+                        <img
+                            className={styles.image}
+                            src={`http://localhost:5000${imageUrl}`}
+                            alt="Uploaded"
+                        />
+                    </div>
+                </>
             )}
-            {imageUrl && (
-                <img
-                    className={styles.image}
-                    src={`http://localhost:4444${imageUrl}`}
-                    alt="Uploaded"
-                />
-            )}
+
             <br />
             <br />
             <TextField
