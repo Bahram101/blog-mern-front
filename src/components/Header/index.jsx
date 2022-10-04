@@ -18,6 +18,8 @@ export const Header = () => {
         }
     };
 
+    
+
     console.log("isAuth", isAuth);
 
     return (

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useMemo, useCallback } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -6,42 +7,25 @@ import SimpleMDE from "react-simplemde-editor";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { selectIsAuth } from "../../redux/slices/auth";
 import { Navigate } from "react-router-dom";
+import { selectIsAuth } from "../../redux/slices/auth";
 import { useSelector } from "react-redux";
-import axios from "../../axios";
 
 export const AddPost = () => {
-    const [isLoading, setIsLoading] = useState(false);
     const isAuth = useSelector(selectIsAuth);
-    const [value, setValue] = useState("");
-    const [title, setTitle] = useState("");
-    const [tags, setTags] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
 
-    const inputFileRef = useRef(null);
+    const imageUrl = "";
+    const [value, setValue] = React.useState("");
 
-    const handleChangeFile = async (event) => {
-        try {
-            const formData = new FormData();
-            const file = event.target.files[0];
-            formData.append("image", file);
-            const { data } = await axios.post("/upload", formData);
-            setImageUrl(data.url);
-        } catch (error) {
-            // console.warn("errrrr",error);
-            alert("Ошибка при загрузке файла");
-        }
-    };
+    const handleChangeFile = () => {};
 
-    const onClickRemoveImage = () => {
-        setImageUrl("");
-    };
-    const onChange = useCallback((value) => {
+    const onClickRemoveImage = () => {};
+
+    const onChange = React.useCallback((value) => {
         setValue(value);
     }, []);
 
-    const options = useMemo(
+    const options = React.useMemo(
         () => ({
             spellChecker: false,
             maxHeight: "400px",
@@ -55,46 +39,33 @@ export const AddPost = () => {
         }),
         []
     );
+
     if (!window.localStorage.getItem("_token") && !isAuth) {
         return <Navigate to="/" />;
     }
 
     return (
         <Paper style={{ padding: 30 }}>
-            <Button
-                onClick={() => inputFileRef.current.click()}
-                variant="outlined"
-                size="large"
-            >
+            <Button variant="outlined" size="large">
                 Загрузить превью
             </Button>
-            <input
-                ref={inputFileRef}
-                type="file"
-                onChange={handleChangeFile}
-                hidden
-            />
+            <input type="file" onChange={handleChangeFile} hidden />
             {imageUrl && (
-                <>
-                    <Button
-                        style={{ marginLeft: "20px" }}
-                        variant="contained"
-                        color="error"
-                        onClick={onClickRemoveImage}
-                    >
-                        Удалить
-                    </Button>
-                    <div>
-                        <img
-                            style={{ width: "300px", marginTop: "20px" }}
-                            className={styles.image}
-                            src={`http://localhost:5000${imageUrl}`}
-                            alt="Uploaded"
-                        />
-                    </div>
-                </>
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={onClickRemoveImage}
+                >
+                    Удалить
+                </Button>
             )}
-
+            {imageUrl && (
+                <img
+                    className={styles.image}
+                    src={`http://localhost:4444${imageUrl}`}
+                    alt="Uploaded"
+                />
+            )}
             <br />
             <br />
             <TextField

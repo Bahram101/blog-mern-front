@@ -5,6 +5,7 @@ import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useParams } from "react-router-dom";
 import axios from "../axios";
+import { useSelector } from "react-redux";
 
 export const FullPost = () => {
     const [data, setData] = useState();
