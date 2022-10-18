@@ -1,20 +1,22 @@
 import React from "react";
 
 import { SideBlock } from "./SideBlock";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import Skeleton from "@mui/material/Skeleton";
+import {
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  Divider,
+  List,
+  Skeleton,
+} from "@mui/material";
 
 export const CommentsBlock = ({ items, children, isLoading = true }) => {
   return (
     <SideBlock title="Комментарии">
       <List>
         {(isLoading ? [...Array(5)] : items).map((obj, index) => (
-          <React.Fragment key={index}>
+          <div key={index}>
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
                 {isLoading ? (
@@ -36,7 +38,7 @@ export const CommentsBlock = ({ items, children, isLoading = true }) => {
               )}
             </ListItem>
             <Divider variant="inset" component="li" />
-          </React.Fragment>
+          </div>
         ))}
       </List>
       {children}
