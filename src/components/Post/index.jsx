@@ -26,13 +26,15 @@ export const Post = ({
   isLoading,
   isEditable,
 }) => {
+  	const dispatch = useDispatch();
   if (isLoading) {
     return <PostSkeleton />;
   }
-	const dispatch = useDispatch();
 
   const onClickRemove = () => {
-    dispatch(removePost(id));
+    if(window.confirm('Are you sure to delete this post?')){
+      dispatch(removePost(id));
+    }
   };
 
   return (

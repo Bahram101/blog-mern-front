@@ -44,7 +44,7 @@ export const FullPost = () => {
         <Post
           id={data.id}
           title={data.title}
-          imageUrl={`http://localhost:5000${data.imageUrl}` || ''}
+          imageUrl={data.imageUrl ? `http://localhost:5000${data.imageUrl}` : ''}
           user={data.user}
           createdAt={"12 июня 2022 г."}
           viewsCount={data.viewsCount}
