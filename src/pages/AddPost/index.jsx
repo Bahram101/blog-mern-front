@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
-import { Box, Button, TextField } from "@mui/material";
+import React, { useRef, useState, useCallback } from "react";
+import { Box, Button, TextareaAutosize, TextField } from "@mui/material";
 import SimpleMDE from "react-simplemde-editor";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { selectIsAuth } from "../../redux/slices/auth";
 import { useSelector } from "react-redux";
 import axios from "../../axios";
@@ -12,12 +12,16 @@ import axios from "../../axios";
 export const AddPost = () => {
   const isAuth = useSelector(selectIsAuth);
   const navigate = useNavigate();
+  const { id } = useParams();
+  const initialState = {
+    title: "",
+    tags: "",
+    text: "",
+    imageUrl: "",
+  };
 
   const [isLoading, setIsLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [tags, setTags] = useState("");
-  const [text, setText] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [state, setState] = useState(initialState);
   const inputFileRef = useRef(null);
 
   const handleChangeFile = async (e) => {
@@ -25,8 +29,8 @@ export const AddPost = () => {
       const formData = new FormData();
       const file = e.target.files[0];
       formData.append("image", file);
-      const { data } = await axios.post("/upload", formData);
-      setImageUrl(data.url);
+      const { data } = await axios.post("/uploads", formData);
+      setState({ ...state, imageUrl: data.url });
     } catch (error) {
       console.warn("errrr", error);
       alert("Ошибка при загрузке файл!");
@@ -34,11 +38,11 @@ export const AddPost = () => {
   };
 
   const onClickRemoveImage = () => {
-    setImageUrl("");
+    setState({ ...state, imageUrl: "" });
   };
 
-  const onChange = React.useCallback((value) => {
-    setText(value);
+  const onChangeText = useCallback((value) => {
+    setState({ ...state, text: value });
   }, []);
 
   const options = React.useMemo(
@@ -63,13 +67,7 @@ export const AddPost = () => {
   const onSubmit = async () => {
     try {
       setIsLoading(true);
-      const fields = {
-        title,
-        imageUrl,
-        tags,
-        text,
-      };
-      const { data } = await axios.post("/posts", fields);
+      const { data } = await axios.post("/posts", state);
       const id = data._id;
       navigate(`/posts/${id}`);
     } catch (error) {
@@ -77,6 +75,9 @@ export const AddPost = () => {
       alert("Ошибка при создания файла");
     }
   };
+
+  console.log("state", state);
+
   return (
     <Box style={{ padding: 30 }}>
       <Button
@@ -92,7 +93,7 @@ export const AddPost = () => {
         onChange={handleChangeFile}
         hidden
       />
-      {imageUrl && (
+      {state.imageUrl && (
         <>
           <Button
             variant="contained"
@@ -101,10 +102,11 @@ export const AddPost = () => {
           >
             Удалить
           </Button>
-          <div>
+          <div style={{ width: "200px" }}>
             <img
+              width="200"
               className={styles.image}
-              src={`http://localhost:5000${imageUrl}`}
+              src={`http://localhost:5000${state.imageUrl}`}
               alt="Uploaded"
             />
           </div>
@@ -118,22 +120,29 @@ export const AddPost = () => {
         variant="standard"
         placeholder="Заголовок статьи..."
         fullWidth
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        value={state.title}
+        onChange={(e) => setState({ ...state, title: e.target.value })}
       />
       <TextField
         classes={{ root: styles.tags }}
         variant="standard"
         placeholder="Тэги"
         fullWidth
-        value={tags}
-        onChange={(e) => setTags(e.target.value)}
+        value={state.tags}
+        onChange={(e) => setState({ ...state, tags: e.target.value })}
       />
-      <SimpleMDE
-        className={styles.editor}
-        value={text}
-        onChange={onChange}
-        options={options}
+      <TextareaAutosize
+        aria-label="minimum height"
+        minRows={10}
+        onChange={(e) => setState({ ...state, text: e.target.value })}
+        style={{
+          border: "none",
+          marginTop: "10px",
+          width: "100%",
+          marginBottom: "10px",
+          padding: "10px",
+          outline: "none",
+        }}
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">
