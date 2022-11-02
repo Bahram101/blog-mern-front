@@ -1,6 +1,5 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Box, Button, TextareaAutosize, TextField } from "@mui/material";
-import SimpleMDE from "react-simplemde-editor";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
@@ -23,6 +22,15 @@ export const AddPost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState(initialState);
   const inputFileRef = useRef(null);
+  const isEditing = Boolean(id);
+
+  useEffect(() => {
+    if (id) {
+      axios.get(`/posts/${id}`).then(({ data }) => {
+        setState(data);
+      });
+    }
+  }, []);
 
   const handleChangeFile = async (e) => {
     try {
@@ -41,25 +49,6 @@ export const AddPost = () => {
     setState({ ...state, imageUrl: "" });
   };
 
-  const onChangeText = useCallback((value) => {
-    setState({ ...state, text: value });
-  }, []);
-
-  const options = React.useMemo(
-    () => ({
-      spellChecker: false,
-      maxHeight: "400px",
-      autofocus: true,
-      placeholder: "Введите текст...",
-      status: false,
-      autosave: {
-        enabled: true,
-        delay: 1000,
-      },
-    }),
-    []
-  );
-
   if (!window.localStorage.getItem("_token") && !isAuth) {
     return <Navigate to="/" />;
   }
@@ -67,9 +56,14 @@ export const AddPost = () => {
   const onSubmit = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.post("/posts", state);
-      const id = data._id;
-      navigate(`/posts/${id}`);
+      const { data } = isEditing
+        ? await axios.patch(`/posts/${id}`, state)
+        : await axios.post("/posts", state);
+
+      const _id = isEditing ? id : data._id;
+
+      navigate(`/posts/${_id}`);
+      
     } catch (error) {
       console.log(error);
       alert("Ошибка при создания файла");
@@ -116,7 +110,7 @@ export const AddPost = () => {
       <br />
       <br />
       <TextField
-        classes={{ root: styles.title }}
+        className={styles.title}
         variant="standard"
         placeholder="Заголовок статьи..."
         fullWidth
@@ -135,6 +129,7 @@ export const AddPost = () => {
         aria-label="minimum height"
         minRows={10}
         onChange={(e) => setState({ ...state, text: e.target.value })}
+        value={state.text}
         style={{
           border: "none",
           marginTop: "10px",
@@ -142,11 +137,12 @@ export const AddPost = () => {
           marginBottom: "10px",
           padding: "10px",
           outline: "none",
+          fontSize: "21px",
         }}
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">
-          Опубликовать
+          {isEditing ? "Сохранить" : "Опубликовать"}
         </Button>
         <a href="/">
           <Button size="large">Отмена</Button>

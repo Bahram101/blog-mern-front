@@ -42,7 +42,7 @@ export const Login = () => {
 
 
     return (
-        <Box classes={{ root: styles.root }}>
+        <Box className={styles.root}>
             <Typography classes={{ root: styles.title }} variant="h5">
                 Вход в аккаунт
             </Typography>
